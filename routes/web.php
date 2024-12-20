@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +14,7 @@ use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 */
 use App\Models\Queue;
 use App\Models\Category;
+use App\Events\QueueUpdated;
 
 // Halaman utama untuk menampilkan antrian
 Route::get('/', function () {
@@ -27,23 +28,26 @@ Route::get('/', function () {
 Route::post('/ambil-antrian/{category}', function (Category $category) {
     $lastQueue = Queue::where('category_id', $category->id)->latest('id')->first();
     $nextNumber = $lastQueue ? intval(substr($lastQueue->number, strpos($lastQueue->number, '-') + 1)) + 1 : 1;
+
     $formattedNumber = $category->code . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
     $queue = Queue::create([
         'number' => $formattedNumber,
         'category_id' => $category->id,
     ]);
 
-    // Kirimkan respons sesuai kebutuhan (redirect atau JSON)
-    if (request()->expectsJson()) {
-        // Jika request berasal dari fetch API atau AJAX
-        return response()->json([
-            'success' => true,
-            'queue' => $queue,
-            'category_name' => $category->name,
-            'timestamp' => now()->format('Y-m-d H:i:s'),
-        ]);
-    }
+    $remainingQueues = Queue::where('category_id', $category->id)
+        ->where('is_called', false)
+        ->count();
 
-    // Untuk request biasa, kembalikan redirect dengan pesan flash
-    return redirect()->back()->with('success', "Nomor antrian Anda: {$queue->number}");
+    // Broadcast event
+    event(new QueueUpdated($category->id, $remainingQueues));
+
+    return response()->json([
+        'success' => true,
+        'queue' => $queue,
+        'category_name' => $category->name,
+        'remaining_queues' => $remainingQueues,
+        'timestamp' => now()->format('Y-m-d H:i:s'),
+    ]);
 });

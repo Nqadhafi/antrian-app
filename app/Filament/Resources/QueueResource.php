@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Filament\Resources;
-
 use App\Filament\Resources\QueueResource\Pages;
+use Illuminate\Support\Facades\Event;
 use App\Models\Queue;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -16,7 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
-// use App\Events\QueueUpdated; // Hapus baris ini
+use App\Events\QueueUpdated; // Pastikan event ini ada
 
 class QueueResource extends Resource
 {
@@ -53,7 +53,6 @@ class QueueResource extends Resource
                     ->label('Panggil Selanjutnya')
                     ->icon('heroicon-o-play')
                     ->action(function (Queue $record) {
-                        // Implementasi aksi tanpa emit event
                         $nextQueue = Queue::where('category_id', $record->category_id)
                             ->where('is_called', false)
                             ->orderBy('id')
@@ -66,8 +65,7 @@ class QueueResource extends Resource
                                 ->where('is_called', false)
                                 ->count();
 
-                            // Hapus emit event
-                            // event(new QueueUpdated($nextQueue->category_id, $remainingQueues));
+                            event(new QueueUpdated($nextQueue->category_id, $remainingQueues));
 
                             Notification::make()
                                 ->title("Antrian {$nextQueue->number} telah dipanggil!")
@@ -80,9 +78,55 @@ class QueueResource extends Resource
                                 ->send();
                         }
                     }),
+
+                Action::make('recallLast')
+                    ->label('Panggil Ulang')
+                    ->icon('heroicon-o-refresh')
+                    ->action(function (Queue $record) {
+                        $lastQueue = Queue::where('category_id', $record->category_id)
+                            ->where('is_called', true)
+                            ->latest('updated_at')
+                            ->first();
+
+                        if ($lastQueue) {
+                            Notification::make()
+                                ->title("Antrian {$lastQueue->number} dipanggil ulang!")
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title("Tidak ada antrian yang dapat dipanggil ulang.")
+                                ->warning()
+                                ->send();
+                        }
+                    }),
+
+                Action::make('resetQueue')
+                    ->label('Reset Antrian')
+                    ->icon('heroicon-o-trash')
+                    ->action(function (Queue $record) {
+                        Queue::where('category_id', $record->category_id)->delete();
+
+                        event(new QueueUpdated($record->category_id, 0));
+
+                        Notification::make()
+                            ->title('Antrian berhasil direset.')
+                            ->success()
+                            ->send();
+                    }),
             ]);
     }
+    public static function boot()
+    {
+        parent::boot();
 
+        Event::listen(QueueUpdated::class, function ($event) {
+            Notification::make()
+                ->title("Antrian baru ditambahkan!")
+                ->success()
+                ->send();
+        });
+    }
     public static function getPages(): array
     {
         return [
