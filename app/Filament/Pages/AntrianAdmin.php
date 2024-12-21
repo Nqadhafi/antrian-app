@@ -27,6 +27,7 @@ class AntrianAdmin extends Page
                 ->where('is_called', false)
                 ->count();
 
+            // Broadcast event
             event(new QueueUpdated($categoryId, $remainingQueues));
 
             $this->notify('success', "Antrian {$queue->number} telah dipanggil!");
@@ -47,6 +48,7 @@ class AntrianAdmin extends Page
                 ->where('is_called', false)
                 ->count();
 
+            // Broadcast event
             event(new QueueUpdated($categoryId, $remainingQueues));
 
             $this->notify('success', "Antrian {$queue->number} dipanggil ulang!");
@@ -59,14 +61,30 @@ class AntrianAdmin extends Page
     {
         Queue::where('category_id', $categoryId)->delete();
 
+        // Broadcast event
         event(new QueueUpdated($categoryId, 0));
 
         $this->notify('success', 'Nomor antrian telah direset.');
     }
 
-    public function queueUpdated($categoryId, $remainingQueues)
+    /**
+     * Tangani event saat antrian baru ditambahkan.
+     */
+    public function handleQueueUpdated($categoryId, $remainingQueues)
     {
-        $this->notify('success', "Antrian baru dibuat untuk kategori ID {$categoryId}. Sisa antrian: {$remainingQueues}");
+        $category = Category::find($categoryId);
+
+        if ($category) {
+            $this->dispatchBrowserEvent('notify', [
+                'type' => 'success',
+                'message' => "Antrian baru ditambahkan untuk kategori {$category->name}. Sisa antrian: {$remainingQueues}."
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('notify', [
+                'type' => 'warning',
+                'message' => "Kategori dengan ID {$categoryId} tidak ditemukan."
+            ]);
+        }
     }
 
     public function getCategoriesProperty()

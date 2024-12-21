@@ -17,6 +17,10 @@ class QueueUpdated implements ShouldBroadcast
 
     public function __construct($categoryId, $remainingQueues)
     {
+        if (!is_int($categoryId) || !is_int($remainingQueues)) {
+            throw new \InvalidArgumentException('Invalid data for QueueUpdated event.');
+        }
+    
         $this->categoryId = $categoryId;
         $this->remainingQueues = $remainingQueues;
     }
