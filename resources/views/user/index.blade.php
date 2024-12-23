@@ -5,17 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Antrian Percetakan</title>
-    
-    <!-- Link ke CSS Bootstrap dan aplikasi -->
+
+    <!-- Link ke CSS Bootstrap -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-
+    <script>
+        // JavaScript untuk menampilkan waktu saat ini di navbar
+        function updateTime() {
+            const date = new Date();
+            const time = date.toLocaleTimeString();
+            document.getElementById('current-time').textContent = time;
+        }
+        setInterval(updateTime, 1000);
+    </script>
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <!-- Header -->
-    <div class="container py-5">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container-fluid">
+            <!-- Logo dan Nama Aplikasi -->
+            <a class="navbar-brand" href="#">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width: 40px; height: 40px; border-radius: 50%;"> 
+                Antrian Percetakan
+            </a>
+            
+            <!-- Waktu Saat Ini di Sebelah Kanan -->
+            <div class="ml-auto">
+                <span id="current-time" class="text-white"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Konten -->
+    <div class="container py-5 flex-grow-1 my-auto">
         <h1 class="text-center mb-4">Selamat Datang di Antrian Percetakan</h1>
 
         <!-- Menampilkan alert sukses jika ada -->
@@ -50,6 +74,11 @@
             <p class="text-center">Waktu: <span id="print-timestamp"></span></p>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white text-center py-3">
+        <p>&copy; 2024 Shabat Printing. All Rights Reserved.</p>
+    </footer>
 
 </body>
 
