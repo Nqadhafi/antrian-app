@@ -5,66 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Antrian Percetakan</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .category-button {
-            display: inline-block;
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .category-button:hover {
-            background-color: #0056b3;
-        }
-        .alert {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #dff0d8;
-            color: #3c763d;
-            border: 1px solid #d6e9c6;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Selamat Datang di Antrian Percetakan</h1>
-
-    @if (session('success'))
-        <div class="alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <h2>Pilih Layanan</h2>
-    <div>
-        @foreach ($categories as $category)
-            <form action="/ambil-antrian/{{ $category->id }}" method="POST" style="display: inline-block;">
-                @csrf
-                <button type="submit" class="category-button">
-                    {{ $category->name }} <br>
-                    <small>(Sisa Antrian: <span id="queue-{{ $category->id }}">{{ $category->queues_count }}</span>)</small>
-                </button>
-            </form>
-        @endforeach
-    </div>
-    <div id="print-template" style="display: none;">
-        <h1>Nomor Antrian Anda</h1>
-        <p>Kategori: <span id="print-category"></span></p>
-        <p>Nomor: <span id="print-number"></span></p>
-        <p>Waktu: <span id="print-timestamp"></span></p>
-    </div>
     
+    <!-- Link ke CSS Bootstrap dan aplikasi -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+
+</head>
+<body class="bg-light">
+
+    <!-- Header -->
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Selamat Datang di Antrian Percetakan</h1>
+
+        <!-- Menampilkan alert sukses jika ada -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Pilih Layanan -->
+        <h2 class="text-center mb-4">Pilih Layanan</h2>
+
+        <div class="row justify-content-center">
+            @foreach ($categories as $category)
+                <div class="col-md-3 mb-3">
+                    <form action="/ambil-antrian/{{ $category->id }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary w-100 category-button">
+                            <h4 class="text-center">{{ $category->name }}</h4>
+                            <small class="d-block text-center">(Sisa Antrian: <span id="queue-{{ $category->id }}">{{ $category->queues_count }}</span>)</small>
+                        </button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Template untuk Print Nomor Antrian -->
+        <div id="print-template" class="mt-5 p-3 border rounded" style="display: none;">
+            <h2 class="text-center">Nomor Antrian Anda</h2>
+            <p class="text-center">Kategori: <span id="print-category"></span></p>
+            <p class="text-center">Nomor: <span id="print-number"></span></p>
+            <p class="text-center">Waktu: <span id="print-timestamp"></span></p>
+        </div>
+    </div>
+
 </body>
-<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+
+<script src="{{ asset ('js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset ('js/pusher.min.js') }}"></script>
 <script>
     const pusher = new Pusher('local-app-key', {
         cluster: 'mt1',

@@ -51,7 +51,7 @@
         @endforeach
     </div>
 
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script src="{{ asset ('js/pusher.min.js') }}"></script>
     <script>
         // Konfigurasi Pusher
         const pusher = new Pusher('local-app-key', {
