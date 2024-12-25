@@ -40,8 +40,15 @@ Route::post('/ambil-antrian/{category}', function (Category $category) {
         ->where('is_called', false)
         ->count();
 
-    // Broadcast event dengan nama kategori
-    event(new QueueUpdated($category->id, $remainingQueues, $category->name));
+    // Broadcast event dengan nama kategori dan nomor antrian
+    event(new QueueUpdated(
+        $category->id,
+        $remainingQueues,
+        $category->name,
+        $formattedNumber
+        // `isAdminCall` default adalah false
+    ));
+    
 
     return response()->json([
         'success' => true,

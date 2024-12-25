@@ -14,15 +14,17 @@ class QueueUpdated implements ShouldBroadcast
 
     public $categoryId;
     public $remainingQueues;
+    public $categoryName;
+    public $queueNumber;
+    public $isAdminCall; // Tambahkan properti ini
 
-    public function __construct($categoryId, $remainingQueues)
+    public function __construct($categoryId, $remainingQueues, $categoryName, $queueNumber, $isAdminCall = false)
     {
-        if (!is_int($categoryId) || !is_int($remainingQueues)) {
-            throw new \InvalidArgumentException('Invalid data for QueueUpdated event.');
-        }
-    
         $this->categoryId = $categoryId;
         $this->remainingQueues = $remainingQueues;
+        $this->categoryName = $categoryName;
+        $this->queueNumber = $queueNumber;
+        $this->isAdminCall = $isAdminCall; // Set properti ini
     }
 
     public function broadcastOn()
