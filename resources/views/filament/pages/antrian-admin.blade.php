@@ -60,6 +60,8 @@
             wsPort: 6001,
             forceTLS: false,
             disableStats: true,
+            reconnectionAttempts: Infinity, // Tidak ada batasan reconnect
+            reconnectInterval: 5000, // Coba reconnect setiap 5 detik
         });
     
         // Subscribe ke channel queue-updates
