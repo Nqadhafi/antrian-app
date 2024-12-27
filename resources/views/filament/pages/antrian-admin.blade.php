@@ -87,7 +87,7 @@
     
             // Trigger notifikasi untuk admin
             const type = 'success';
-            const message = `Antrian baru ditambahkan untuk kategori ID ${data.categoryId}!`;
+            const message = `Antrian baru ditambahkan untuk kategori ${data.categoryName}!`;
     
             console.log('Memancarkan event notify dengan:', { type, message });
     
