@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Queue;
 use App\Models\Category;
 use App\Events\QueueUpdated;
+use App\Http\Controllers\PrintController;
+
+Route::post('/print-queue', [PrintController::class, 'printQueue'])->name('print.queue');
 
 // Halaman utama untuk menampilkan antrian
 Route::get('/', function () {
