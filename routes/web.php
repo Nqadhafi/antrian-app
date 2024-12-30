@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\PrintController;
-
+use App\Http\Controllers\DisplayController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,3 +23,6 @@ Route::post('/ambil-antrian/{category}', [QueueController::class, 'store'])->nam
 
 // Cetak nomor antrian
 Route::post('/print-queue', [PrintController::class, 'printQueue'])->name('print.queue');
+
+//Display
+Route::get('/display', [DisplayController::class, 'index'])->name('display.index');
