@@ -3,113 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Antrian</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Display Antrian Real-Time</title>
 
-    <!-- Link ke CSS Bootstrap -->
+    <!-- Link ke CSS -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-
-    <style>
-        .current-call {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #2980b9;
-            text-align: center;
-        }
-
-        .left-panel {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-
-        .category-title {
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
-        .last-queue {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #34495e;
-        }
-
-        .remaining-queue {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .video-container {
-            width: 100%;
-            height: auto;
-            margin-bottom: 1rem;
-        }
-
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .queue-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .queue-box {
-            flex: 0 0 48%;
-        }
-    </style>
 </head>
-<body class="bg-light">
-    <div class="container-fluid py-5">
-        <div class="row">
-            <!-- Nomor Panggilan Saat Ini -->
-            <div class="col-md-4 left-panel bg-primary text-white text-center">
-                <div>
-                    <h2 class="mb-4">Nomor Panggilan</h2>
-                    <p id="current-number" class="current-call">A-001</p>
+<body class="bg-light vh-100 d-flex flex-column">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Antrian Real-Time</a>
+            <div class="ml-auto">
+                <span id="current-time" class="text-white"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
+            <!-- Nomor Panggilan -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center bg-primary text-white">
+                <div class="text-center">
+                    <h2>Nomor Panggilan</h2>
+                    <p id="current-number" class="display-1 fw-bold">--</p>
                 </div>
             </div>
 
-            <!-- Video dan Informasi Antrian -->
-            <div class="col-md-8">
+            <!-- Video Player dan Informasi Antrian -->
+            <div class="col-md-8 bg-light d-flex flex-column">
+                <!-- Video Player -->
                 @if ($video)
-                    <div class="video-container">
-                        <video controls autoplay loop style="width: 100%; max-height: 200px; border-radius: 10px;">
+                    <div class="video-container mb-3 flex-grow-0">
+                        <video controls autoplay loop class="rounded" style="height: 30rem; width:100%;">
                             <source src="{{ asset('storage/' . $video->path) }}" type="video/mp4">
                             Browser Anda tidak mendukung video.
                         </video>
                     </div>
                 @endif
 
-                <h4 class="mb-3">Informasi Antrian</h4>
-
-                <div class="queue-section">
-                    @foreach ($categories as $category)
-                    <div class="queue-box card" data-category-id="{{ $category->id }}">
-                        <p class="category-title">{{ $category->name }}</p>
-                        @if ($category->queues->isNotEmpty())
-                            <p class="last-queue">Antrian Terakhir: {{ $category->queues->first()->number }}</p>
-                            <p class="remaining-queue">Sisa Antrian: {{ $category->queues_count }}</p>
-                        @else
-                            <p class="last-queue">Antrian Terakhir: Belum Ada</p>
-                            <p class="remaining-queue">Sisa Antrian: 0</p>
-                        @endif
+                <!-- Informasi Antrian -->
+                <div class="container  flex-grow-1">
+                    <div class="row">
+                        @foreach ($categories as $category)
+                            <div class="col-md-3 mb-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3 class="card-title">{{ $category->name }}</h3>
+                                        <p>
+                                            <strong>Antrian Terakhir:</strong>
+                                            <h3 class="fw-bold">
+                                                <span id="last-queue-{{ $category->id }}">{{ $category->last_queue ?? 'Belum Ada' }}</span>
+                                            </h3>
+                                        </p>
+                                        <p>
+                                            <strong>Sisa Antrian:</strong>
+                                            <span id="queue-{{ $category->id }}">{{ $category->remaining_queues }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    
-                    @endforeach
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="{{ asset('js/pusher.min.js') }}"></script>
+    <script src="{{ asset('/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('/js/pusher.min.js') }}"></script>
+    <script src="{{ asset ('/js/callQueue.js') }}"></script>
     <script>
+        // Konfigurasi Pusher
         const pusher = new Pusher('local-app-key', {
             cluster: 'mt1',
             wsHost: '192.168.100.102',
@@ -118,13 +84,48 @@
             disableStats: true,
         });
 
+        // Subscribe ke channel
         const channel = pusher.subscribe('queue-updates');
+
+        // Bind event untuk real-time update
         channel.bind('App\\Events\\QueueUpdated', function (data) {
             console.log('Event diterima:', data);
-            if (data.queueNumber && data.isAdminCall) {
-                document.getElementById('current-number').textContent = data.queueNumber;
+
+            // Update jumlah sisa antrian
+            const queueElement = document.getElementById(`queue-${data.categoryId}`);
+            if (queueElement) {
+                queueElement.innerText = data.remainingQueues;
             }
+
+            // Update nomor panggilan utama hanya jika dari admin
+            if (data.isAdminCall) {
+                const currentNumberElement = document.getElementById('current-number');
+                if (currentNumberElement) {
+                    currentNumberElement.textContent = data.queueNumber || 'A-000';
+                }
+
+                // Update antrian terakhir yang dipanggil
+                const lastQueueElement = document.getElementById(`last-queue-${data.categoryId}`);
+                if (lastQueueElement) {
+                    lastQueueElement.innerText = data.queueNumber || 'Belum Ada';
+                }
+
+
+            }
+            if (data.isAdminCall && data.queueNumber) {
+    // Ambil abjad dari queueNumber (misalnya, "A" dari "A-003")
+    const type = data.queueNumber.split('-')[0]; // Pisahkan abjad sebelum "-"
+    const number = parseInt(data.queueNumber.split('-')[1], 10); // Pisahkan angka setelah "-"
+
+    console.log(`Tipe Antrian: ${type}, Nomor: ${number}`);
+
+    // Generate audio queue dan mulai pemutaran
+    const audioQueue = generateAudioQueue(type, number);
+    playAudioQueue(audioQueue);
+}
         });
+
+
     </script>
 </body>
 </html>

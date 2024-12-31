@@ -15,4 +15,21 @@ class Category extends Model
     {
         return $this->hasMany(Queue::class);
     }
+
+    // Accessor untuk Antrian Terakhir yang Dipanggil
+    public function getLastQueueAttribute()
+    {
+        return $this->queues()
+            ->where('is_called', true)
+            ->orderBy('created_at', 'desc')
+            ->first()?->number;
+    }
+
+    // Accessor untuk Sisa Antrian
+    public function getRemainingQueuesAttribute()
+    {
+        return $this->queues()
+            ->where('is_called', false)
+            ->count();
+    }
 }
