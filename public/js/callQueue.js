@@ -1,12 +1,21 @@
+let isPlaying = false; // Variabel global untuk melacak status pemutaran audio
+
 /**
  * Fungsi untuk memutar audio queue secara berurutan.
  * @param {Array} queue - Daftar nama file audio yang akan diputar.
  */
 function playAudioQueue(queue) {
+    if (isPlaying) {
+        console.warn('Pemutaran audio sedang berlangsung. Menunggu hingga selesai.');
+        return;
+    }
+
     if (!Array.isArray(queue) || queue.length === 0) {
         console.error('Queue audio kosong atau bukan array.');
         return;
     }
+
+    isPlaying = true; // Tandai bahwa pemutaran sedang berlangsung
 
     // Map queue ke dalam objek Audio
     const audioFiles = queue.map(file => {
@@ -32,11 +41,13 @@ function playAudioQueue(queue) {
             });
         } else {
             console.log('Semua audio selesai diputar.');
+            isPlaying = false; // Reset status setelah selesai
         }
     };
 
     playNext(0);
 }
+
 
 /**
  * Fungsi untuk memecah nomor menjadi bagian audio yang sesuai.

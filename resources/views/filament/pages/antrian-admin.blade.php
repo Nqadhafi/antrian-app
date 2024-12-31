@@ -56,7 +56,7 @@
         // Konfigurasi Pusher
         const pusher = new Pusher('local-app-key', {
             cluster: 'mt1',
-            wsHost: '127.0.0.1',
+            wsHost: '192.168.100.102',
             wsPort: 6001,
             forceTLS: false,
             disableStats: true,

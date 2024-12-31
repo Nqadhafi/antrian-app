@@ -129,8 +129,9 @@
 
     // Generate audio queue dan mulai pemutaran
     const audioQueue = generateAudioQueue(type, number);
-    playAudioQueue(audioQueue);
+    playAudioQueue(audioQueue); // Fungsi ini sekarang memeriksa `isPlaying`
 }
+
         });
 
 
