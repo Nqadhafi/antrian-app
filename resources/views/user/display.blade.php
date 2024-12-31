@@ -43,14 +43,15 @@
             <!-- Video Player dan Informasi Antrian -->
             <div class="col-md-8 bg-light d-flex flex-column mt-5">
                 <!-- Video Player -->
-                @if ($video)
-                    <div class="video-container mb-3 flex-grow-0">
-                        <video controls autoplay loop class="rounded" style="height: 30rem; width:100%;">
-                            <source src="{{ asset('storage/' . $video->path) }}" type="video/mp4">
-                            Browser Anda tidak mendukung video.
-                        </video>
-                    </div>
-                @endif
+                @if ($videos->isNotEmpty())
+                <div class="video-container mb-3 flex-grow-0">
+                    <video id="dynamic-video" autoplay loop muted class="rounded" style="height: 30rem; width: 100%;">
+                        <source src="{{ asset('storage/' . $videos->first()->path) }}" type="video/mp4">
+                        Browser Anda tidak mendukung video.
+                    </video>
+                </div>
+            @endif
+            
 
                 <!-- Informasi Antrian -->
                 <div class="container  flex-grow-1">
@@ -82,6 +83,7 @@
     <script src="{{ asset('/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('/js/pusher.min.js') }}"></script>
     <script src="{{ asset ('/js/callQueue.js') }}"></script>
+    <script src="{{ asset ('/js/videoApp.js') }}"></script>
     <script>
         // Konfigurasi Pusher
         const pusher = new Pusher('local-app-key', {

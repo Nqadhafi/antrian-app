@@ -12,10 +12,11 @@ class DisplayController extends Controller
     public function index()
     {
         $categories = Category::with('queues')->get();
-        $video = Video::latest('id')->first();
-
-        return view('user.display', compact('categories', 'video'));
+        $videos = Video::latest('id')->get(); // Ambil semua video yang tersedia
+    
+        return view('user.display', compact('categories', 'videos'));
     }
+    
 
     public function callQueue(Request $request)
     {
