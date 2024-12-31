@@ -1,0 +1,22 @@
+Simpan ini sebagai extensi .bat
+
+@echo off
+REM Stop XAMPP (Apache dan MySQL)
+echo Stopping XAMPP services...
+start "" "D:\xampp\xampp_stop.exe"
+timeout /t 5 >nul
+
+REM Cari dan hentikan Laravel WebSocket server
+echo Stopping Laravel WebSocket server...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :6001') do (
+    taskkill /PID %%a /F
+)
+echo Laravel WebSocket server stopped successfully!
+
+REM Tutup browser yang mengakses aplikasi Laravel
+echo Closing browser...
+for /f "tokens=2 delims=," %%a in ('tasklist /fi "imagename eq chrome.exe" /v /fo csv ^| findstr "antrian.local"') do (
+    taskkill /PID %%a /F
+)
+
+pause

@@ -1,0 +1,14 @@
+Simpan ini sebagai extensi .bat
+
+@echo off
+REM Jalankan XAMPP (Apache dan MySQL)
+start "" "D:\xampp\xampp_start.exe"
+timeout /t 5 >nul
+
+REM Buka aplikasi Laravel di browser
+start "" "http://antrian.local"
+echo Starting Laravel WebSocket server...
+cd /d "D:\xampp\htdocs\antrian-app"
+start cmd /k "php artisan websockets:serve"
+echo WebSocket server started successfully!
+pause
