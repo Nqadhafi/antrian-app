@@ -25,3 +25,23 @@ body {
     border: 1px solid #d6e9c6;
     border-radius: 5px;
 }
+
+.bg-swg {
+    background-color: #144C99 ;
+}
+.category-1 {
+    background-color: #00A2E9 ;
+}
+
+.category-2 {
+    background-color: #e7c101;
+}
+
+.category-3 {
+    background-color: #E40082;
+}
+.category-4 {
+    background-color: #332C2B;
+}
+
+/* Tambahkan warna untuk kategori lainnya */

@@ -7,16 +7,22 @@
     <title>Display Antrian Real-Time</title>
 
     <!-- Link ke CSS -->
+    <script src="{{ asset('js/time.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body class="bg-light vh-100 d-flex flex-column">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-white">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Antrian Real-Time</a>
+            <!-- Logo dan Nama Aplikasi -->
+     
+            <a class="navbar-brand" href="#" >
+                <img src="{{ asset('assets/img/logo.webp') }}" alt="Logo" style="max-height: 2rem;"> 
+            </a>
             <div class="ml-auto">
-                <span id="current-time" class="text-white"></span>
+                <span id="current-time" class="text-dark fw-bold"></span>
             </div>
         </div>
     </nav>
@@ -25,15 +31,17 @@
     <div class="container-fluid flex-grow-1">
         <div class="row h-100">
             <!-- Nomor Panggilan -->
-            <div class="col-md-4 d-flex align-items-center justify-content-center bg-primary text-white">
-                <div class="text-center">
-                    <h2>Nomor Panggilan</h2>
-                    <p id="current-number" class="display-1 fw-bold">--</p>
+            <div class="col-md-4 d-flex align-items-center text-white rounded my-3">
+                <div class=" d-flex flex-column  justify-content-center text-center bg-swg container-fluid mx-3 rounded-4" style="height:50rem;">
+                    <div class=" mx-auto">
+                        <h2>Nomor Panggilan</h2>
+                        <p id="current-number" class="display-1 fw-bold">--</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Video Player dan Informasi Antrian -->
-            <div class="col-md-8 bg-light d-flex flex-column">
+            <div class="col-md-8 bg-light d-flex flex-column mt-5">
                 <!-- Video Player -->
                 @if ($video)
                     <div class="video-container mb-3 flex-grow-0">

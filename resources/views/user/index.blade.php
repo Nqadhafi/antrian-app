@@ -14,7 +14,7 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container-fluid">
             <!-- Logo dan Nama Aplikasi -->
      
@@ -24,14 +24,14 @@
 
             <!-- Waktu Saat Ini di Sebelah Kanan -->
             <div class="ml-auto">
-                <span id="current-time" class="text-white"></span>
+                <span id="current-time" class="text-dark fw-bold"></span>
             </div>
         </div>
     </nav>
 
     <!-- Header Konten -->
     <div class="container py-5 flex-grow-1 my-auto">
-        <h1 class="text-center mb-4">Selamat Datang di Antrian Percetakan</h1>
+        <h1 class="text-center mb-4">Selamat Datang di Shabat Printing</h1>
 
         <!-- Menampilkan alert sukses jika ada -->
         @if (session('success'))
@@ -41,25 +41,30 @@
         @endif
 
         <!-- Pilih Layanan -->
-        <h2 class="text-center mb-4">Pilih Layanan</h2>
+        <h2 class="text-center mb-4">Silahkan Pilih Layanan Kami</h2>
 
         <div class="row justify-content-center">
             @foreach ($categories as $category)
-                <div class="col-md-3 mb-3">
+                <div class="col-md-6 mb-3">
                     <form action="/ambil-antrian/{{ $category->id }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-outline-primary w-100 category-button">
-                            <h4 class="text-center">{{ $category->name }}</h4>
-                            <small class="d-block text-center">(Sisa Antrian: <span id="queue-{{ $category->id }}">{{ $category->queues_count }}</span>)</small>
+                        <button type="submit" 
+                                class="btn w-100 category-button text-white category-{{ $category->id }}" 
+                                style="height: 15rem;">
+                            <h4 class="text-center fw-bold">{{ $category->name }}</h4>
+                            <small class="d-block text-center fw-bold">(Sisa Antrian: <span id="queue-{{ $category->id }}">{{ $category->queues_count }}</span>)</small>
                         </button>
                     </form>
                 </div>
             @endforeach
         </div>
+        
+        
+        
 </div>
     </div>
     <!-- Footer -->
-    <footer class="bg-primary text-white text-center py-3">
+    <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2024 Shabat Printing. All Rights Reserved.</p>
     </footer>
 
