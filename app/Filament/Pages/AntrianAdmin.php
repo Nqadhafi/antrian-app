@@ -10,7 +10,7 @@ use App\Events\QueueUpdated;
 class AntrianAdmin extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $navigationLabel = 'Kelola Antrian';
+    protected static ?string $navigationLabel = 'Antrian Kategori';
     protected static string $view = 'filament.pages.antrian-admin';
 
     /**
