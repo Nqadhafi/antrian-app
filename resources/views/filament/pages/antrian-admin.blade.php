@@ -55,9 +55,9 @@
     <script>
         // Konfigurasi Pusher
         const pusher = new Pusher('local-app-key', {
-            cluster: 'mt1',
-            wsHost: '192.168.100.102',
-            wsPort: 6001,
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+            wsHost: '{{ env('PUSHER_HOST') }}',
+            wsPort: '{{ env('PUSHER_PORT')}}',
             forceTLS: false,
             disableStats: true,
             reconnectionAttempts: Infinity, // Tidak ada batasan reconnect
