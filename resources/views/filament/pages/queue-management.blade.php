@@ -19,6 +19,16 @@
 
 
     </style>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        @foreach ($this->categories as $category)
+            <div id="category-{{ $category->id }}" class="bg-white p-4 rounded shadow">
+                <h3 class="text-lg font-bold">{{ $category->name }}</h3>
+                <p>Total Antrian: <strong class="total-queues">{{ $category->totalQueues }}</strong></p>
+                <p>Belum Dipanggil: <strong class="not-called-queues">{{ $category->notCalledQueues }}</strong></p>
+                <p>Sudah Dipanggil: <strong class="called-queues">{{ $category->calledQueues }}</strong></p>
+            </div>
+        @endforeach
+    </div>
     <div class="flex j-center mb-4 gap-4" >
         <!-- Tombol Panggil Selanjutnya -->
         <button wire:click="callNext" class="px-4 py-2 text-white rounded" style="background-color: rgb(2, 90, 223);">
@@ -110,6 +120,30 @@
                 // Tampilkan notifikasi
                 showNotification('success', `Antrian baru ditambahkan: ${data.queueNumber}`);
             }
+            if (data.categoryId) {
+        const categoryElement = document.getElementById(`category-${data.categoryId}`);
+        if (categoryElement) {
+            // Ambil elemen terkait
+            const totalElement = categoryElement.querySelector('.total-queues');
+            const remainingElement = categoryElement.querySelector('.not-called-queues');
+            const calledElement = categoryElement.querySelector('.called-queues');
+
+            // Ambil nilai dari elemen atau default ke 0
+            const currentTotal = parseInt(totalElement.textContent) || 0;
+            const currentRemaining = parseInt(remainingElement.textContent) || 0;
+            const currentCalled = parseInt(calledElement.textContent) || 0;
+
+            // Update nilai berdasarkan event
+            const newRemaining = data.remainingQueues || 0;
+            const newTotal = currentTotal + (data.queueNumber ? 1 : 0); // Tambahkan 1 jika ada nomor antrian baru
+            const newCalled = newTotal - newRemaining;
+
+            // Set nilai baru ke elemen
+            totalElement.textContent = newTotal;
+            remainingElement.textContent = newRemaining;
+            calledElement.textContent = newCalled >= 0 ? newCalled : 0;
+        }
+    }
         });
 
         // Fungsi untuk menampilkan notifikasi

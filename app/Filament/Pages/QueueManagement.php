@@ -115,4 +115,20 @@ class QueueManagement extends Page
     {
         return Queue::with('category')->get(); // Ambil semua antrian
     }
+    /**
+ * Ambil data kategori dengan jumlah antrian.
+ */
+public function getCategoriesProperty()
+{
+    return Category::withCount([
+        'queues as totalQueues',
+        'queues as calledQueues' => function ($query) {
+            $query->where('is_called', true);
+        },
+        'queues as notCalledQueues' => function ($query) {
+            $query->where('is_called', false);
+        },
+    ])->get();
+}
+
 }
