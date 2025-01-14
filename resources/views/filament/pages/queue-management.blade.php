@@ -17,13 +17,32 @@
     align-items: center;
 }
 
-
+.total-queues{
+    font-size: 4rem;
+}
+#category-1{
+    color: #00A2E9 ;
+    border: 0.5rem solid #00A2E9;
+}
+#category-2{
+    color: #e7c101;
+    border: 0.5rem solid #e7c101;
+}
+#category-3{
+    color: #E40082 ;
+    border: 0.5rem solid #E40082;
+}
+#category-4{
+    color: #332C2B ;
+    border: 0.5rem solid #332C2B;
+}
     </style>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <div class="grid md:grid-cols-4 gap-3 text-center">
         @foreach ($this->categories as $category)
-            <div id="category-{{ $category->id }}" class="bg-white p-4 rounded shadow">
-                <h3 class="text-lg font-bold">{{ $category->name }}</h3>
-                <p>Total Antrian: <strong class="total-queues">{{ $category->totalQueues }}</strong></p>
+            <div id="category-{{ $category->id }}" class="bg-white p-2 rounded shadow">
+                <h3 class="text-lg  text-center"><strong>{{ $category->name }}</strong></h3>
+                <p class="text-center">Total Antrian:</p> 
+                <h1 class="total-queues ">{{ $category->totalQueues }}</h1>
                 <p>Belum Dipanggil: <strong class="not-called-queues">{{ $category->notCalledQueues }}</strong></p>
                 <p>Sudah Dipanggil: <strong class="called-queues">{{ $category->calledQueues }}</strong></p>
             </div>
